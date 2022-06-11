@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaEmailMapper">
+    
+    <resultMap type="SysOaEmail" id="SysOaEmailResult">
+        <result property="id"    column="id"    />
+        <result property="emailNo"    column="email_no"    />
+        <result property="emailSubject"    column="email_subject"    />
+        <result property="emailContent"    column="email_content"    />
+        <result property="sendTime"    column="send_time"    />
+        <result property="emailType"    column="email_type"    />
+        <result property="emailStatus"    column="email_status"    />
+        <result property="emailLabel"    column="email_label"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="belongUserId"    column="belong_user_id"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="fileUrl"    column="file_url"    />
+    </resultMap>
+
+    <sql id="selectSysOaEmailVo">
+        select id, email_no, email_subject, email_content, send_time, email_type, email_status, email_label, create_by, create_time, update_time, update_by, belong_user_id,  is_delete, file_url from sys_oa_email
+    </sql>
+
+    <select id="selectSysOaEmailList" parameterType="SysOaEmail" resultMap="SysOaEmailResult">
+        <include refid="selectSysOaEmailVo"/>
+        <where>
+            <if test="emailNoList !=null and emailNoList.size() > 0">
+                and	email_no in
+                <foreach item="item" index="index" collection="emailNoList"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="idList !=null and idList.size() > 0">
+                and	id in
+                <foreach item="item" index="index" collection="idList"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="emailNo != null  and emailNo != ''"> and email_no = #{emailNo}</if>
+            <if test="emailSubject != null  and emailSubject != ''"> and email_subject = #{emailSubject}</if>
+            <if test="emailContent != null  and emailContent != ''"> and email_content = #{emailContent}</if>
+            <if test="sendTime != null "> and send_time = #{sendTime}</if>
+            <if test="emailStatus != null "> and email_status = #{emailStatus}</if>
+            <if test="emailLabel != null "> and email_label = #{emailLabel}</if>
+
+        </where>
+        order by send_time desc
+    </select>
+
+
+    <select id="selectEmailList" resultType="com.snow.system.domain.SysOaEmailVO" parameterType="com.snow.system.domain.SysOaEmailDO">
+
+        select o.id as id,o.email_no as emailNo, email_subject as emailSubject,o.email_content as emialContent,o.send_time as sendTime,o.email_type as emailType,
+        o.email_status as emailStatus,o.email_label as emailLabel,
+        m.producer_id as producerId,m.consumer_id as consumerId,m.message_read_status as messageReadStatus
+        from  sys_message_transition m left join sys_oa_email o
+        on o.email_no =m.message_outside_id
+        <where>
+            <if test="emailNoList !=null and emailNoList.size() > 0">
+                and	o.email_no in
+                <foreach item="item" index="index" collection="emailNoList"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="emailNo != null  and emailNo != ''"> and o.email_no = #{emailNo}</if>
+            <if test="emailSubject != null  and emailSubject != ''"> and o.email_subject like concat ('%', #{emailSubject},'%')</if>
+
+            <if test="sendTime != null "> and o.send_time = #{sendTime}</if>
+            <if test="emailStatus != null "> and o.email_status = #{emailStatus}</if>
+            <if test="emailLabel != null "> and o.email_label = #{emailLabel}</if>
+            <if test="producerOrConsumerId != null  and producerOrConsumerId != ''">
+                and (m.producer_id = #{producerOrConsumerId} or m.consumer_id = #{producerOrConsumerId})
+            </if>
+            <if test="consumerId != null  and consumerId != ''"> and m.consumer_id = #{consumerId}</if>
+            <if test="messageType != null  and messageType != ''"> and m.message_type = #{messageType}</if>
+        </where>
+
+        <if test="sortField != null  and sortField != ''">
+                 order by ${sortField}
+        </if>
+    </select>
+
+    <select id="selectSysOaEmailById" parameterType="Long" resultMap="SysOaEmailResult">
+        <include refid="selectSysOaEmailVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSysOaEmailByEmailNo" parameterType="String" resultMap="SysOaEmailResult">
+        <include refid="selectSysOaEmailVo"/>
+        where email_no = #{EmailNo}
+    </select>
+        
+    <insert id="insertSysOaEmail" parameterType="SysOaEmail" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_oa_email
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="emailNo != null">email_no,</if>
+            <if test="emailSubject != null">email_subject,</if>
+            <if test="emailContent != null">email_content,</if>
+
+            <if test="sendTime != null">send_time,</if>
+            <if test="emailType != null">email_type,</if>
+            <if test="emailStatus != null">email_status,</if>
+            <if test="emailLabel != null">email_label,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="belongUserId != null">belong_user_id,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="fileUrl != null">file_url,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="emailNo != null">#{emailNo},</if>
+            <if test="emailSubject != null">#{emailSubject},</if>
+            <if test="emailContent != null">#{emailContent},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="emailType != null">#{emailType},</if>
+            <if test="emailStatus != null">#{emailStatus},</if>
+            <if test="emailLabel != null">#{emailLabel},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="belongUserId != null">#{belongUserId},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="fileUrl != null">#{fileUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaEmail" parameterType="SysOaEmail">
+        update sys_oa_email
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="emailNo != null">email_no = #{emailNo},</if>
+            <if test="emailSubject != null">email_subject = #{emailSubject},</if>
+            <if test="emailContent != null">email_content = #{emailContent},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            <if test="emailType != null">email_type = #{emailType},</if>
+            <if test="emailStatus != null">email_status = #{emailStatus},</if>
+            <if test="emailLabel != null">email_label = #{emailLabel},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateSysOaEmailByEmailNo" parameterType="SysOaEmail">
+        update sys_oa_email
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="emailNo != null">email_no = #{emailNo},</if>
+            <if test="emailSubject != null">email_subject = #{emailSubject},</if>
+            <if test="emailContent != null">email_content = #{emailContent},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            <if test="emailType != null">email_type = #{emailType},</if>
+            <if test="emailStatus != null">email_status = #{emailStatus},</if>
+            <if test="emailLabel != null">email_label = #{emailLabel},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where email_no = #{emailNo}
+    </update>
+    <delete id="deleteSysOaEmailById" parameterType="Long">
+        delete from sys_oa_email where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaEmailByIds" parameterType="String">
+        delete from sys_oa_email where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>
