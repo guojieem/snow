@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.from.mapper.SysFormInstanceMapper">
+    
+    <resultMap type="SysFormInstance" id="SysFormInstanceResult">
+        <result property="id"    column="id"    />
+        <result property="formCode"    column="form_code"    />
+        <result property="formName"    column="form_name"    />
+        <result property="fromUrl"    column="from_url"    />
+        <result property="processKey"    column="process_key"    />
+        <result property="dingProcessCode"    column="ding_process_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="rev"    column="rev"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="fromContentHtml"    column="from_content_html"    />
+
+    </resultMap>
+
+    <sql id="selectSysFormInstanceVo">
+        select id, form_code, form_name, from_url,process_key, create_by, from_content_html_,create_time, update_time, update_by, rev, is_delete, tenant_id from sys_form_instance
+    </sql>
+
+
+</mapper>
