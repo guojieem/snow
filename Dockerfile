@@ -1,5 +1,5 @@
 FROM java
-VOLUME /
-ADD ./snow-admin.jar app.jar
+VOLUME /tmp
+ADD ./snow-admin.jar snow-admin.jar
 EXPOSE 8081
-ENTRYPOINT [ "java", "-jar", "/app.jar" ]
+ENTRYPOINT [ "java", "-jar", "/snow-admin.jar" ]
